@@ -1,5 +1,6 @@
 const { json } = require('express');
 const express = require('express');
+const authRouter = require('./routes/signUp');
 
 const app = express();
 
@@ -7,10 +8,6 @@ app.set('trust proxy');
 app.use(json());
 
 
-app.get('/api/auth/start', (req, res, next) => {
-    res.json({
-        hello: 'world'
-    })
-})
+app.use(authRouter);
 
 module.exports = app;
