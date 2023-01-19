@@ -1,6 +1,7 @@
 const express = require('express');
 const { model } = require('mongoose');
 const User = require('../medels/User');
+const createJWT = require('../util/createJwt');
 
 const router = express.Router();
 
@@ -17,11 +18,10 @@ router.post('/api/auth/signup', async (req, res, next) => {
         address
     });
 
+    const token = createJWT(user.id, user.email);
     res.status(201).json({
         message: 'success',
-        data: {
-            user
-        }
+        data: { token }
     })
 })
 

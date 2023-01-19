@@ -1,6 +1,8 @@
 const express = require('express');
 const User = require('../medels/User');
 const bcrypt = require('bcrypt');
+const createJWT = require('../util/createJwt');
+
 
 const router = express.Router();
 
@@ -19,9 +21,11 @@ router.post('/api/auth/signin', async(req, res, next) => {
             throw new Error('invalid')
         }
 
+        const token = createJWT(user.id, user.email);
+
         res.status(201).json({
             message: 'success',
-            data: { user }
+            data: { token }
         })
 } catch(err) {
     console.log(err)
