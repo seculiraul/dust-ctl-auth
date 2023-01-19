@@ -6,9 +6,16 @@ const router = express.Router();
 
 router.post('/api/auth/signup', async (req, res, next) => {
     
-    const {email, password, passwordConfirmed, firstName, lastName } = req.body;
+    const {email, password, passwordConfirmed, firstName, lastName, address } = req.body;
 
-    const user = await User.create(req.body);
+    const user = await User.create({
+        email,
+        password,
+        passwordConfirmed,
+        firstName,
+        lastName,
+        address
+    });
 
     res.status(201).json({
         message: 'success',
