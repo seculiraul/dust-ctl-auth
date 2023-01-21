@@ -23,6 +23,10 @@ router.post('/api/auth/signin', async(req, res, next) => {
 
         const token = createJWT(user.id, user.email);
 
+        req.session = {
+            jwt: token
+        }
+
         res.status(201).json({
             message: 'success',
             data: { token }
