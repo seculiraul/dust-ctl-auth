@@ -7,6 +7,7 @@ const signInRouter = require('./routes/signIn')
 const signoutRouter = require('./routes/signOut')
 const credentials = require('./middleware/credentals')
 const allowedOrigins = require('./allowedOrigins')
+const errorMiddleware = require('./middleware/errorMiddleware')
 
 const app = express()
 
@@ -29,5 +30,6 @@ app.use(cookieParser())
 app.use(signUpRouter)
 app.use(signInRouter)
 app.use(signoutRouter)
+app.use(errorMiddleware)
 
 module.exports = app

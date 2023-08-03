@@ -1,32 +1,44 @@
-const express = require("express")
-const { model } = require("mongoose")
-const User = require("../medels/User")
-const createJWT = require("../util/createJwt")
+const express = require('express')
+const { model } = require('mongoose')
+const User = require('../medels/User')
+const ApiError = require('../util/ApiError')
+const catchAsync = require('../util/catchAsync')
+const createJWT = require('../util/createJwt')
+const wrapFunction = require('../util/wrapFunction')
 
 const router = express.Router()
 
-router.post("/api/auth/signup", async (req, res, next) => {
-  const { email, password, passwordConfirmed, firstName, lastName, address } =
-    req.body
+router.post(
+  '/api/auth/signup',
+  catchAsync(async (req, res, next) => {
+    const { email, password, passwordConfirmed, firstName, lastName, address } =
+      req.body
 
-  const user = await User.create({
-    email,
-    password,
-    passwordConfirmed,
-    firstName,
-    lastName,
-    address,
+    const { data: user, error } = wrapFunction(
+      await User.create({
+        email,
+        password,
+        passwordConfirmed,
+        firstName,
+        lastName,
+        address,
+      })
+    )
+
+    if (error) {
+      return next(new ApiError('Error creating the user'))
+    }
+
+    const token = createJWT(user.id, user.email)
+
+    req.session = {
+      jwt: token,
+    }
+    res.status(201).json({
+      message: 'success',
+      data: { token },
+    })
   })
-
-  const token = createJWT(user.id, user.email)
-
-  req.session = {
-    jwt: token,
-  }
-  res.status(201).json({
-    message: "success",
-    data: { token },
-  })
-})
+)
 
 module.exports = router

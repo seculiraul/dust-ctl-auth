@@ -2,6 +2,9 @@ const express = require('express')
 const User = require('../medels/User')
 const bcrypt = require('bcrypt')
 const createJWT = require('../util/createJwt')
+const wrapFunction = require('../util/wrapFunction')
+const catchAsync = require('../util/catchAsync')
+const ApiError = require('../util/ApiError')
 
 const router = express.Router()
 
@@ -12,19 +15,22 @@ router.get('/api/test', async (req, res, next) => {
   })
 })
 
-router.post('/api/auth/signin', async (req, res, next) => {
-  try {
+router.post(
+  '/api/auth/signin',
+  catchAsync(async (req, res, next) => {
     console.log(req.body)
     const { email, password } = req.body
 
     if (!email || !password) {
-      throw new Error('invalid request')
+      throw new ApiError('Request is invalid', 400)
     }
 
-    const user = await User.findOne({ email }).select('+password -__v')
+    const { data: user, error } = await wrapFunction(
+      User.findOne({ email }).select('+password -__v')
+    )
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      throw new Error('invalid')
+      return next(new ApiError('User not found or password is wrong', 400))
     }
 
     const token = createJWT(user.id, user.email)
@@ -40,9 +46,7 @@ router.post('/api/auth/signin', async (req, res, next) => {
       token,
       user: user.firstName,
     })
-  } catch (err) {
-    console.log(err)
-  }
-})
+  })
+)
 
 module.exports = router
