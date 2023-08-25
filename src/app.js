@@ -8,10 +8,12 @@ const signoutRouter = require('./routes/signOut')
 const credentials = require('./middleware/credentals')
 const allowedOrigins = require('./allowedOrigins')
 const errorMiddleware = require('./middleware/errorMiddleware')
+const userDetails = require('./routes/user-details')
 
 const app = express()
 
 app.set('trust proxy')
+app.use(cookieParser())
 app.use(credentials)
 app.use(
   cors({
@@ -26,10 +28,10 @@ app.use(
   })
 )
 app.use(json())
-app.use(cookieParser())
 app.use(signUpRouter)
 app.use(signInRouter)
 app.use(signoutRouter)
+app.use(userDetails)
 app.use(errorMiddleware)
 
 module.exports = app
