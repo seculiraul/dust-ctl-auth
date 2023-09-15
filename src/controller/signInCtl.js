@@ -13,15 +13,21 @@ module.exports = catchAsync(async (req, res, next) => {
     throw new ApiError('Request is invalid', 400)
   }
 
-  const { data: user, error } = await wrapFunction(
-    User.findOne({ email }).select('+password -__v')
-  )
+  const user = await User.findOne({ email }).select('+password -__v')
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return next(new ApiError('User not found or password is wrong', 401))
   }
+  console.log
 
   const { token, refresh } = createJwt(user.id, user.email)
+
+  user.refreshToken = refresh
+  await User.updateOne(
+    { email: user.email },
+    { refreshToken: refresh },
+    { runValidators: false }
+  )
 
   res.cookie('jwt', refresh, {
     httpOnly: true,

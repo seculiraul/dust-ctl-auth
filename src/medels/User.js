@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
     min: [6, 'The minimum length of the password is 6'],
     select: false,
   },
+  refreshToken: String,
   passwordConfirmed: {
     type: String,
     required: true,

@@ -9,6 +9,7 @@ const credentials = require('./middleware/credentals')
 const allowedOrigins = require('./allowedOrigins')
 const errorMiddleware = require('./middleware/errorMiddleware')
 const userDetails = require('./routes/user-details')
+const refreshRoute = require('./routes/refresh')
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.use(json())
 app.use(signUpRouter)
 app.use(signInRouter)
 app.use(signoutRouter)
+app.use(refreshRoute)
 app.use(userDetails)
 app.use(errorMiddleware)
 
