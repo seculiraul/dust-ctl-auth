@@ -1,7 +1,7 @@
 const User = require('../medels/User')
 const ApiError = require('../util/ApiError')
 const catchAsync = require('../util/catchAsync')
-const createJwt = require('../util/createJwt')
+const createJwt = require('../util/jwt/createJwt')
 const wrapFunction = require('../util/wrapFunction')
 const jwt = require('jsonwebtoken')
 
@@ -17,12 +17,8 @@ module.exports = catchAsync(async (req, res, next) => {
 
   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
     if (err || user.email !== decoded.email) return res.sendStatus(403)
-    const accessToken = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '10h' }
-    )
-    console.log(accessToken)
-    res.json({ accessToken })
+    const { token } = createJwt({ id: user.id, email: user.email }, ['token'])
+    console.log(token)
+    res.json({ token })
   })
 })

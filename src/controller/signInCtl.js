@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const User = require('../medels/User')
 const ApiError = require('../util/ApiError')
 const catchAsync = require('../util/catchAsync')
-const createJwt = require('../util/createJwt')
+const createJwt = require('../util/jwt/createJwt')
 const wrapFunction = require('../util/wrapFunction')
 
 module.exports = catchAsync(async (req, res, next) => {
@@ -18,9 +18,11 @@ module.exports = catchAsync(async (req, res, next) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return next(new ApiError('User not found or password is wrong', 401))
   }
-  console.log
 
-  const { token, refresh } = createJwt(user.id, user.email)
+  const { token, refresh } = createJwt({ id: user.id, email: user.email }, [
+    'token',
+    'refresh',
+  ])
 
   user.refreshToken = refresh
   await User.updateOne(

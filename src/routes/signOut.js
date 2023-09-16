@@ -1,13 +1,8 @@
-const express = require("express")
+const express = require('express')
+const signOutCtl = require('../controller/signOutCtl')
 
 const router = express.Router()
 
-router.post("/api/auth/signout", (req, res, next) => {
-  req.session = null
-
-  res.status(201).json({
-    message: "success",
-  })
-})
+router.get('/api/auth/signout', signOutCtl)
 
 module.exports = router
