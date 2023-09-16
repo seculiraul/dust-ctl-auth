@@ -3,7 +3,6 @@ const { model } = require('mongoose')
 const User = require('../medels/User')
 const ApiError = require('../util/ApiError')
 const catchAsync = require('../util/catchAsync')
-const createJWT = require('../util/createJwt')
 const wrapFunction = require('../util/wrapFunction')
 
 const router = express.Router()
@@ -29,14 +28,8 @@ router.post(
       return next(new ApiError('Error creating the user'))
     }
 
-    const token = createJWT(user.id, user.email)
-
-    req.session = {
-      jwt: token,
-    }
     res.status(201).json({
       message: 'success',
-      data: { token },
     })
   })
 )

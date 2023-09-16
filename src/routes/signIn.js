@@ -1,10 +1,4 @@
 const express = require('express')
-const User = require('../medels/User')
-const bcrypt = require('bcrypt')
-const createJWT = require('../util/createJwt')
-const wrapFunction = require('../util/wrapFunction')
-const catchAsync = require('../util/catchAsync')
-const ApiError = require('../util/ApiError')
 const signInCtl = require('../controller/signInCtl')
 const verifyJWT = require('../middleware/verifyJWT')
 
