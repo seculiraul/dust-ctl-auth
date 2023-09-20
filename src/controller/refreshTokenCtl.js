@@ -17,7 +17,10 @@ module.exports = catchAsync(async (req, res, next) => {
 
   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, decoded) => {
     if (err || user.email !== decoded.email) return res.sendStatus(403)
-    const { token } = createJwt({ id: user.id, email: user.email }, ['token'])
+    const { token } = createJwt(
+      { email: user.email, name: user.firstName, role: user.role },
+      ['token']
+    )
     console.log(token)
     res.json({ token })
   })

@@ -19,10 +19,10 @@ module.exports = catchAsync(async (req, res, next) => {
     return next(new ApiError('User not found or password is wrong', 401))
   }
 
-  const { token, refresh } = createJwt({ id: user.id, email: user.email }, [
-    'token',
-    'refresh',
-  ])
+  const { token, refresh } = createJwt(
+    { email: user.email, name: user.firstName, role: user.role },
+    ['token', 'refresh']
+  )
 
   user.refreshToken = refresh
   await User.updateOne(
@@ -40,6 +40,5 @@ module.exports = catchAsync(async (req, res, next) => {
 
   res.status(201).json({
     token,
-    user: user.firstName,
   })
 })
