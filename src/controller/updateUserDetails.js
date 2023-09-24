@@ -3,7 +3,7 @@ const catchAsync = require('../util/catchAsync')
 
 module.exports = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findOneAndUpdate(
-    { email: req.payload.email },
+    { email: req.email },
     req.body
   )
   res.status(203).json({
